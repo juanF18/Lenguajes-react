@@ -14,8 +14,10 @@ let termyNoTerm = [];
 let grammNoRecursion = [];
 let grammLL1 = [];
 let primeros = [];
+let siguientes = [];
 let prodPrimeros = [];
 let listaPrimeros = [];
+let listaSiguientes = [];
 export default function GrammLL1() {
   const [grammatica, setGrammatica] = useState("");
   const [mostrar, setMostrar] = useState(false);
@@ -29,8 +31,7 @@ export default function GrammLL1() {
     if (grammLL1 !== []) {
       separador(grammLL1);
       first(grammLL1);
-      console.log("Primeros" + primeros);
-      console.log("Produccion primeros" + prodPrimeros);
+      follow(grammLL1);
     }
     /*
     console.log("terminales" + terminales);
@@ -87,7 +88,14 @@ export default function GrammLL1() {
       </div>
 
       <div className="firsfollow">
-        {mostrar ? <FirstyFollow listPrimeros={listaPrimeros} /> : <></>}
+        {mostrar ? (
+          <FirstyFollow
+            listPrimeros={listaPrimeros}
+            listSiguientes={listaSiguientes}
+          />
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   );
@@ -394,6 +402,102 @@ function first(gramm) {
   }
 
   for (let i = 0; i < prodPrimeros.length; i++) {
-    listaPrimeros.push(`Prim(${prodPrimeros[i]})->${primeros[i]}`);
+    listaPrimeros.push(`Prim( ${prodPrimeros[i]} ) -> ${primeros[i]}`);
+  }
+}
+
+function buscarSiguientes(line, productorB) {
+  let sig = [];
+  let [productor, producido] = line.split("->");
+  let produccion = producido.split("|");
+  let noEspacios = [];
+  let posProductor = 0;
+  let contador = 0;
+  let prims = [];
+  for (let i in prodPrimeros) {
+    if (productor === prodPrimeros[i]) {
+      posProductor = i;
+    }
+  }
+
+  for (let i in produccion) {
+    noEspacios.push(produccion[i].split(" "));
+  }
+  for (let i in noEspacios) {
+    if (noEspacios[i].includes(productorB) === true) {
+      for (let j in noEspacios[i]) {
+        contador++;
+        if (noEspacios[i][j] === productorB) {
+          for (let k in siguientes) {
+            if (
+              j === noEspacios[i].length - 1 &&
+              sig.includes(siguientes[posProductor][k]) === false
+            ) {
+              sig.push(siguientes[posProductor]);
+              sig = sig.flat();
+            }
+            if (j <= noEspacios[i].length - 2) {
+              if (
+                noEspacios[i][contador] === "λ" &&
+                sig.includes(siguientes[posProductor][k]) === false
+              ) {
+                console.log("falle maestro");
+                sig.push(siguientes[posProductor]);
+                sig = sig.flat();
+              }
+              if (
+                terminales.includes(noEspacios[i][contador]) &&
+                sig.includes(noEspacios[i][contador]) === false
+              ) {
+                sig.push(noEspacios[i][contador]);
+                sig = sig.flat();
+              }
+              if (noTerminales.includes(noEspacios[i][contador])) {
+                for (let l in prodPrimeros) {
+                  for (let m in primeros[l]) {
+                    if (
+                      prodPrimeros[l] === noEspacios[i][contador] &&
+                      prims.includes(primeros[l][m]) === false
+                    ) {
+                      console.log("Sere yo maestro: ", primeros[l][m]);
+                      prims.push(primeros[l][m]);
+                      prims = prims.flat();
+                      if (
+                        prims.includes("λ") &&
+                        prims.includes(siguientes[l][m]) === false
+                      ) {
+                        console.log("No, yo te falle");
+                        prims.push(siguientes[l]);
+                      } else {
+                        sig.push(prims);
+                        sig = sig.flat();
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  if (siguientes.length === 0) {
+    sig.push("$");
+  }
+  if (sig[0] !== null) {
+    siguientes.push(sig);
+  }
+}
+
+function follow(gramm) {
+  for (let i = 0; i < prodPrimeros.length; i++) {
+    for (let j = 0; j < gramm.length; j++) {
+      buscarSiguientes(gramm[j], prodPrimeros[i]);
+    }
+  }
+
+  for (let i in prodPrimeros) {
+    listaSiguientes.push(`Sig( ${prodPrimeros[i]} ) -> ${siguientes}`);
   }
 }
