@@ -1,0 +1,16 @@
+.primero{
+    align-items: center;
+    align-content: center;
+}
+.navinfo{
+    margin: 20px 20% 20px 20%;
+}
+
+.form-control{
+    padding: 1rem;
+    text-align: justify
+}
+
+.btn{
+    margin: 0 90%;
+}
