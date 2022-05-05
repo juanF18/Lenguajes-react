@@ -15,6 +15,7 @@ let grammNoRecursion = [];
 let grammLL1 = [];
 let primeros = [];
 let prodPrimeros = [];
+let listaPrimeros = [];
 export default function GrammLL1() {
   const [grammatica, setGrammatica] = useState("");
   const [mostrar, setMostrar] = useState(false);
@@ -86,11 +87,7 @@ export default function GrammLL1() {
       </div>
 
       <div className="firsfollow">
-        {/*mostrar ? (
-          <FirstyFollow prodPrimeros={prodPrimeros} primero={primeros} />
-        ) : (
-          <></>
-        )*/}
+        {mostrar ? <FirstyFollow listPrimeros={listaPrimeros} /> : <></>}
       </div>
     </div>
   );
@@ -394,5 +391,9 @@ function buscarPrimeros(line) {
 function first(gramm) {
   for (let line in gramm) {
     buscarPrimeros(gramm[line]);
+  }
+
+  for (let i = 0; i < prodPrimeros.length; i++) {
+    listaPrimeros.push(`Prim(${prodPrimeros[i]})->${primeros[i]}`);
   }
 }

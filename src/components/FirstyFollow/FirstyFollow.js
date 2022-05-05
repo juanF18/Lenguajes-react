@@ -4,18 +4,11 @@ import { Card, ListGroup } from "react-bootstrap";
 import "./FirstyFollow.css";
 
 export default function FirstyFollow(props) {
-  const { prodPrimeros, primeros } = props;
+  const { listPrimeros } = props;
 
-  /*
-  const listaPrimeros = prodPrimeros.map((prod, index) => (
-    <ListGroup.Item key={prodPrimeros[index].toString()}>
-      {`Prim(${prodPrimeros[index]})->` + primeros[index]}
-    </ListGroup.Item>
+  const listaPrimeros = listPrimeros.map((prod) => (
+    <ListGroup.Item key={prod.toString()}>{prod.toString()}</ListGroup.Item>
   ));
-  */
-  for (var i = 0; i < prodPrimeros.length; i++) {
-    console.log("Prim(" + prodPrimeros[i] + ") → " + primeros[i]);
-  }
 
   return (
     <div>
@@ -25,7 +18,7 @@ export default function FirstyFollow(props) {
             <Card.Body>
               <Card.Title>Primeros</Card.Title>
               <Card.Text>
-                <ListGroup>{}</ListGroup>
+                <ListGroup>{listaPrimeros}</ListGroup>
               </Card.Text>
             </Card.Body>
           </Card>
